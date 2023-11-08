@@ -115,6 +115,17 @@ export const BtnWrapper = styled.div`
   justify-content: space-around;
 `;
 
+export const SettingsTitle = styled.h3`
+  font-size: 1.1rem;
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.33;
+  text-align: center;
+  margin-bottom: 16px;
+  margin-bottom: 20px;
+  color: var(--title-text-main-color);
+`;
+
 export const Btn = styled.button`
   padding: 10px 20px;
   border: none;

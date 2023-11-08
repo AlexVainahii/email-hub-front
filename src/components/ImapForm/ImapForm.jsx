@@ -18,6 +18,8 @@ import {
   SiMailgunI,
   IoMdHelpCircleI,
   FormGroupI,
+  SettingsBox,
+  SettingsTitle,
 } from './ImapForm.styled';
 import {
   useCreateImapEmailMutation,
@@ -213,6 +215,7 @@ const ImapForm = ({
           onChange={e => setAddressPass(e.target.value)}
         />
       </FormGroup>
+      <SettingsTitle>Налаштування IMAP</SettingsTitle>
       <FormGroup>
         <Label htmlFor="host">Хост:</Label>
         <Input
@@ -244,7 +247,7 @@ const ImapForm = ({
           onChange={e => setPass(e.target.value)}
         />
       </FormGroup>
-
+      <SettingsTitle>Налаштування SMPT</SettingsTitle>
       <FormGroup>
         <Label htmlFor="smtpHost">Хост:</Label>
         <Input
