@@ -1,4 +1,4 @@
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import {
   AddBox,
@@ -53,17 +53,17 @@ const ImapBox = ({
     { value: 'mailbox-icon-6', label: 'Zoho', icon: <SiZohoI /> },
     { value: 'mailbox-icon-7', label: 'Mail', icon: <SiMailgunI /> },
   ];
-  const [totalContainers, setTotalContainers] = useState(mailBoxArray?.length);
-  const [containersPerPage, setContainersPerPage] = useState(5);
+  const [totalContainers] = useState(mailBoxArray?.length);
+  const [containersPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   const [initialSettings, setInitialSettings] = useState(null);
-  const [totalPagesContain, setTotalPagesContain] = useState(
-    mailBoxArray?.length % containersPerPage === 0
-      ? mailBoxArray?.length / containersPerPage + 1
-      : Math.ceil(mailBoxArray?.length / containersPerPage)
-  );
+  // const [totalPagesContain, setTotalPagesContain] = useState(
+  //   mailBoxArray?.length % containersPerPage === 0
+  //     ? mailBoxArray?.length / containersPerPage + 1
+  //     : Math.ceil(mailBoxArray?.length / containersPerPage)
+  // );
 
   const [isModalOpen, setModalOpen] = useState(false);
   const totalPages =
@@ -116,13 +116,13 @@ const ImapBox = ({
   const handleNextPage = () => {
     setCurrentPage(currentPage + 1);
   };
-  const handleTotalContainersDec = () => {
-    setTotalContainers(totalContainers - 1);
-  };
+  // const handleTotalContainersDec = () => {
+  //   setTotalContainers(totalContainers - 1);
+  // };
 
-  const handleTotalContainersAdd = () => {
-    setTotalContainers(totalContainers + 1);
-  };
+  // const handleTotalContainersAdd = () => {
+  //   setTotalContainers(totalContainers + 1);
+  // };
   return (
     <>
       <Container>

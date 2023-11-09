@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useGetMailOneQuery } from 'redux/emails/emailsApi';
 import {
   useLocation,
@@ -25,11 +25,11 @@ import {
   ButtonB,
 } from './Mail.styled';
 
-import ReactQuill from 'react-quill';
 import { changeMail } from 'redux/local/slice';
 import { useDispatch } from 'react-redux';
 
 const Mail = () => {
+  /* eslint-disable */
   const [
     mailArray,
     accentBox,

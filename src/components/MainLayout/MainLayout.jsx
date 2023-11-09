@@ -17,11 +17,8 @@ import Header from '../Header';
 import SideBar from '../SideBar';
 // import Spinner from '../Spiner';
 import { loadLocal } from '../ThemeToggler/localStorage';
-import ImageAnimation from 'components/Bandero-goose/ImageAnimation';
-import {
-  ContainerR,
-  override,
-} from 'components/Bandero-goose/ImageAnimation.styled';
+
+import { override } from 'components/Bandero-goose/ImageAnimation.styled';
 import { MoonLoader } from 'react-spinners';
 
 const thema = loadLocal('isLightTheme') ?? true;

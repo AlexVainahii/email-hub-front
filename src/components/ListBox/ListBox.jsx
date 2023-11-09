@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from 'redux/auth/selectors';
 
 const ListBox = () => {
+  /* eslint-disable */
   const [
     mailArray,
     accentBox,

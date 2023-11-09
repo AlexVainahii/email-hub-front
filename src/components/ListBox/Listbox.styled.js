@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 
-import { AiOutlineAppstoreAdd } from 'react-icons/ai';
-import { BsBoxArrowInUp, BsFillBellFill } from 'react-icons/bs';
+import { BsBoxArrowInUp } from 'react-icons/bs';
 import { FaCheckSquare, FaTrashRestoreAlt } from 'react-icons/fa';
 import { IoIosMailOpen } from 'react-icons/io';
 import {
@@ -10,7 +9,7 @@ import {
   IoSendSharp,
   IoTrashSharp,
 } from 'react-icons/io5';
-import { MdDeleteForever, MdSettingsSuggest } from 'react-icons/md';
+
 import { RiSpamFill } from 'react-icons/ri';
 import { NavLink } from 'react-router-dom';
 

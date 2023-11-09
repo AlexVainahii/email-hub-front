@@ -3,7 +3,6 @@
 import ImageAnimation from 'components/Bandero-goose/ImageAnimation';
 import ControlPanelMail from 'components/ControlPanelMail';
 import ImapBox from 'components/ImapBox';
-import ListBox from 'components/ListBox';
 import {
   CategoriesItem,
   CategoriesList,
@@ -43,12 +42,7 @@ import {
   selectPage,
   selectPath,
 } from 'redux/local/selectors';
-import {
-  changeId,
-  changeLocal,
-  changePage,
-  changePath,
-} from 'redux/local/slice';
+import { changeId, changeLocal, changePath } from 'redux/local/slice';
 
 const MailsPage = () => {
   // const { t } = useTranslation();
@@ -115,7 +109,7 @@ const MailsPage = () => {
     if (page === 1) setServerPage(page);
     if ((page + 8) % 10 === 0) setServerPage((page + 8) / 10 + 1);
   }, [page]);
-
+  /* eslint-disable */
   useEffect(() => {
     if (allListBox !== undefined) {
       const {
@@ -184,7 +178,7 @@ const MailsPage = () => {
       );
     }
   }, []);
-
+  /* eslint-disable */
   useEffect(() => {
     if (allList && allBoxes) {
       refetch();

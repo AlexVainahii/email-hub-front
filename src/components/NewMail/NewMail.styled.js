@@ -1,5 +1,4 @@
 import styled from '@emotion/styled';
-import { IoArrowRedoCircle, IoArrowUndoCircleSharp } from 'react-icons/io5';
 import { MdCancel } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 export const Li = styled.li`

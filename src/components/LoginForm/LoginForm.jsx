@@ -32,16 +32,11 @@ import { MoonLoader } from 'react-spinners';
 import loginElements from 'images/login-elements.png';
 import loginElementsRetina from 'images/login-elements@2x.png';
 import AuthNavigate from 'components/AuthNavigate/AuthNavigate';
-import ImageAnimation from 'components/Bandero-goose/ImageAnimation';
+
 import {
   ContainerR,
-  Img,
-  Img1,
-  TransparentBackground,
   override,
 } from 'components/Bandero-goose/ImageAnimation.styled';
-import image from '../Bandero-goose/images/shu.jpg';
-import image1 from '../Bandero-goose/images/iron-man.webp';
 
 const LoginForm = () => {
   const { t } = useTranslation();

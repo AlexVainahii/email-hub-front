@@ -1,7 +1,6 @@
 import AuthSection from '../components/AuthSection/';
 import Description from '../components/Description/';
 import ReviewsSlider from '../components/ReviewsSlider/';
-import Footer from '../components/Footer/';
 
 const MainPage = () => {
   return (

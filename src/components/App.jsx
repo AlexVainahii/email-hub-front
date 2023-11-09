@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import image from './Bandero-goose/images/shu.jpg';
-import image1 from './Bandero-goose/images/iron-man.webp';
 import {
   selectIsFetchingCurrentUser,
   selectIsLoggedIn,

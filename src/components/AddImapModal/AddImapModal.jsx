@@ -1,6 +1,5 @@
 import React from 'react';
 import Modal from '../Modal';
-import FeedbackForm from '../FeedbackForm';
 import ImapForm from 'components/ImapForm';
 
 const AddImapModal = ({

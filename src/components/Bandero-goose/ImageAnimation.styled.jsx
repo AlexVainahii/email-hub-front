@@ -6,14 +6,7 @@ const override = css`
   display: block;
   margin: 0 auto;
 `;
-const rotateAnimation = keyframes`
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-`;
+
 const moveAnimation = keyframes`
 0% {
     transform: translateX(0);

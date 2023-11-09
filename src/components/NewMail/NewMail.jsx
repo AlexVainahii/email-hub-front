@@ -25,6 +25,7 @@ import { selectMail } from 'redux/local/selectors';
 import { useSendEmailMutation } from 'redux/emails/emailsApi';
 
 const NewMail = () => {
+  /* eslint-disable */
   const [
     mailArray,
     accentBox,
@@ -34,6 +35,7 @@ const NewMail = () => {
     color,
     handleNavigateNew,
   ] = useOutletContext();
+  /* eslint-disable */
   const mail = useSelector(selectMail);
 
   const { uids } = useParams();

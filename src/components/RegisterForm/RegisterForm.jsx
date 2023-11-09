@@ -32,15 +32,11 @@ import { useNavigate } from 'react-router-dom';
 import registerElements from 'images/signup-elements.png';
 import registerElementsRetina from 'images/signup-elements@2x.png';
 import AuthNavigate from 'components/AuthNavigate/AuthNavigate';
-import ImageAnimation from 'components/Bandero-goose/ImageAnimation';
+
 import {
   ContainerR,
-  Img,
-  Img1,
   override,
 } from 'components/Bandero-goose/ImageAnimation.styled';
-import image from '../Bandero-goose/images/shu.jpg';
-import image1 from '../Bandero-goose/images/iron-man.webp';
 import { MoonLoader } from 'react-spinners';
 
 const RegisterForm = () => {
