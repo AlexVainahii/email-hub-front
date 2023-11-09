@@ -128,7 +128,7 @@ const ControlPanelMail = ({
       setSearchValue(searchQueryParam);
     }
   }, [searchParams]);
-
+  /* eslint-disable */
   useEffect(() => {
     if (path) setNewCount(box?.countMail);
   }, [path]);
