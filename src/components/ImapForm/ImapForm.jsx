@@ -293,7 +293,9 @@ const ImapForm = ({
           }}
         >
           <MoonLoader color="#fff" loading={true} css={override} size={100} />
-          <h4>{message}</h4>
+          <h4 style={{ backgroundColor: 'rgba(256,256,256,0.5)' }}>
+            {message}
+          </h4>
         </div>
       ) : null}
     </>
