@@ -1,5 +1,19 @@
 import styled from '@emotion/styled';
 import { keyframes } from '@emotion/react';
+
+import { css } from '@emotion/react';
+const override = css`
+  display: block;
+  margin: 0 auto;
+`;
+const rotateAnimation = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
 const moveAnimation = keyframes`
 0% {
     transform: translateX(0);
@@ -22,9 +36,14 @@ const moveAnimation1 = keyframes`
 const ContainerR = styled.div`
   width: 100vw;
   height: 100vh;
-  position: relative;
+  position: absolute;
   background-size: cover;
   background-position: center;
+  background: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 0;
 `;
 const Img = styled.img`
   width: 120vw;
@@ -41,4 +60,13 @@ const Img1 = styled.img`
   animation: ${moveAnimation1} 3s linear forwards;
 `;
 
-export { ContainerR, Img, Img1 };
+const TransparentBackground = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: none; /* Прозорий чорний фон */
+`;
+
+export { ContainerR, Img, Img1, TransparentBackground, override };

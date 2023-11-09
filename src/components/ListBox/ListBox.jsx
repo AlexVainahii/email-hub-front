@@ -31,6 +31,13 @@ const ListBox = () => {
     handleNavigate,
     setCheckedMailArray,
     checkedMailArray,
+    color,
+    handleNavigateNew,
+    dataD,
+    setDataD,
+    handleMove,
+    handleFlags,
+    handleDelete,
   ] = useOutletContext();
   const { itemPerPage } = useSelector(selectUser);
   const [searchParams] = useSearchParams();
@@ -55,7 +62,8 @@ const ListBox = () => {
   };
   return (
     <>
-      {mailList
+      {[...mailList]
+        ?.sort((a, b) => new Date(b.date) - new Date(a.date))
         ?.slice((page - 1) * itemPerPage, page * itemPerPage)
         .map(({ id, date, from, subject, unseen }) => {
           return (
@@ -78,6 +86,7 @@ const ListBox = () => {
               <MailItem
                 unseen={unseen.toString()}
                 onClick={() => {
+                  handleFlags(true, { id, date, from, subject, unseen });
                   handleNavigate(id);
                 }}
               >
@@ -90,13 +99,59 @@ const ListBox = () => {
                 </MailDate>
               </MailItem>
               <ButtonMailWrap className="show">
-                <SpamIcon path={path} />
-                <TrashIcon path={path} />
-                <UnSpamIcon path={path} />
-                <TrashRestoreIcon path={path} />
+                <SpamIcon
+                  path={path}
+                  onClick={() => {
+                    handleMove(
+                      path,
+                      accentBox?.mailboxes[
+                        accentBox?.mailboxes.findIndex(
+                          elem => elem.nameEn === 'Junk'
+                        )
+                      ]?.path
+                    );
+                  }}
+                />
+                <TrashIcon
+                  path={path}
+                  onClick={() => {
+                    !['Trash', '[Gmail]/Кошик'].includes(path)
+                      ? handleMove(
+                          path,
+                          accentBox?.mailboxes[
+                            accentBox?.mailboxes.findIndex(
+                              elem => elem.nameEn === 'Trash'
+                            )
+                          ]?.path
+                        )
+                      : handleDelete(path);
+                  }}
+                />
+                <UnSpamIcon
+                  path={path}
+                  onClick={() => {
+                    handleMove(path, 'INBOX');
+                  }}
+                />
+                <TrashRestoreIcon
+                  path={path}
+                  onClick={() => {
+                    handleMove(path, 'INBOX');
+                  }}
+                />
 
-                <UnReadIcon unseen={unseen.toString()} />
-                <OpenIcon unseen={unseen.toString()} />
+                <UnReadIcon
+                  unseen={unseen.toString()}
+                  onClick={() => {
+                    handleFlags(false, { id, date, from, subject, unseen });
+                  }}
+                />
+                <OpenIcon
+                  unseen={unseen.toString()}
+                  onClick={() => {
+                    handleFlags(true, { id, date, from, subject, unseen });
+                  }}
+                />
               </ButtonMailWrap>
             </MailItemWrap>
           );

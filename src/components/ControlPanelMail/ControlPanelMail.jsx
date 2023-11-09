@@ -28,15 +28,19 @@ import {
 } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-import { useGetEmailsFromSearchQuery } from 'redux/emails/emailsApi';
+import {
+  useGetEmailsFromSearchQuery,
+  useGetNewEmailsFromBoxMutation,
+} from 'redux/emails/emailsApi';
 import { useSelector } from 'react-redux';
-import { selectId } from 'redux/local/selectors';
+import { selectId, selectListBox } from 'redux/local/selectors';
 import AddTaskModal from 'components/AddTaskModal/AddTaskModal';
 import {
   IconCheck,
   InputCheck,
   MailCheck,
 } from 'components/ListBox/Listbox.styled';
+import { changeLocal } from 'redux/local/slice';
 
 const ControlPanelMail = ({
   box,
@@ -46,11 +50,19 @@ const ControlPanelMail = ({
   mailArray,
   setCheckedMailArray,
   checkedMailArray,
+  setAccentBox,
+  accentBox,
+  handleMove,
+  handleFlags,
+  handleDelete,
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const listBox = useSelector(selectListBox);
   const idStorage = useSelector(selectId);
   const { uid, _id } = useParams();
+  const [getNewEmailsFromBox] = useGetNewEmailsFromBoxMutation();
 
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -149,10 +161,53 @@ const ControlPanelMail = ({
       setCheckedMailArray([]);
     }
   };
+  const handleLoad = async () => {
+    const newMail = await getNewEmailsFromBox({
+      _id,
+      path,
+      page,
+      uid: mailArray[0]?.id,
+    });
+
+    if (newMail?.data?.listEmail?.length > 1) {
+      setAccentBox(prev => {
+        const mailboxIndex = prev.mailboxes.findIndex(
+          elem => elem.path === path
+        );
+        const updatedMailboxes = [...prev.mailboxes]; // Створюємо копію масиву mailboxes
+        updatedMailboxes[mailboxIndex] = {
+          ...updatedMailboxes[mailboxIndex], // Копіюємо попередні властивості поштової скриньки
+          mailList: [
+            ...newMail?.data?.listEmail.slice(
+              0,
+              newMail?.data?.listEmail.length - 1
+            ),
+            ...mailArray,
+          ],
+          countMail: newMail?.data?.countMail,
+          countMailUnseen: newMail?.data?.countMailUnseen, // Оновлюємо mailList
+        };
+        dispatch(
+          changeLocal(
+            listBox.map(elem =>
+              elem._id === prev._id
+                ? { ...prev, mailboxes: updatedMailboxes }
+                : elem
+            )
+          )
+        );
+        return {
+          ...prev,
+          mailboxes: updatedMailboxes,
+        }; // Оновлюємо mailboxes в accentBox та повертаємо оновлений об'єкт accentBox
+      });
+    }
+  };
+
   return (
     <PanelContainer>
       <ButtonWrap prv={(!_id).toString()}>
-        {!uid && (
+        {_id ? (
           <>
             <InputCheck
               type="checkbox"
@@ -163,10 +218,10 @@ const ControlPanelMail = ({
               <IconCheck className="IconCheck" />
             </MailCheck>
           </>
-        )}
+        ) : null}
 
         {!uid ? (
-          <LoadIcon />
+          <LoadIcon onClick={handleLoad} />
         ) : (
           <BackLinkIcon
             uid={uid}
@@ -187,17 +242,61 @@ const ControlPanelMail = ({
           />
         )}
         {!['Junk', '[Gmail]/Спам'].includes(path) ? (
-          <SpamIcon chekout={checkedMailArray.length} />
+          <SpamIcon
+            chekout={checkedMailArray.length}
+            onClick={() => {
+              handleMove(
+                path,
+                accentBox?.mailboxes[
+                  accentBox?.mailboxes.findIndex(elem => elem.nameEn === 'Junk')
+                ]?.path
+              );
+            }}
+          />
         ) : (
-          <UnSpamIcon chekout={checkedMailArray.length} />
+          <UnSpamIcon
+            chekout={checkedMailArray.length}
+            onClick={() => {
+              handleMove(path, 'INBOX');
+            }}
+          />
         )}
-        {!['Trash', '[Gmail]/Кошик'].includes(path) ? (
-          <TrashIcon chekout={checkedMailArray.length} />
-        ) : (
-          <TrashRestoreIcon chekout={checkedMailArray.length} />
+
+        <TrashIcon
+          chekout={checkedMailArray.length}
+          onClick={() => {
+            !['Trash', '[Gmail]/Кошик'].includes(path)
+              ? handleMove(
+                  path,
+                  accentBox?.mailboxes[
+                    accentBox?.mailboxes.findIndex(
+                      elem => elem.nameEn === 'Trash'
+                    )
+                  ]?.path
+                )
+              : handleDelete(path);
+          }}
+        />
+        {!['Trash', '[Gmail]/Кошик'].includes(path) && (
+          <TrashRestoreIcon
+            chekout={checkedMailArray.length}
+            onClick={() => {
+              handleMove(path, 'INBOX');
+            }}
+          />
         )}
-        <UnReadIcon chekout={checkedMailArray.length} />
-        <OpenIcon chekout={checkedMailArray.length} />
+        <UnReadIcon
+          chekout={checkedMailArray.length}
+          onClick={() => {
+            handleFlags(false);
+          }}
+        />
+        <OpenIcon
+          chekout={checkedMailArray.length}
+          onClick={() => {
+            handleFlags(true);
+          }}
+        />
         <TaskIcon onClick={handleOpenModal} />
       </ButtonWrap>
       <FormSearch onSubmit={handleSubmit}>

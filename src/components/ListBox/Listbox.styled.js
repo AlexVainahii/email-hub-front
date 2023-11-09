@@ -109,6 +109,7 @@ export const CategoriesItem = styled.li`
   }
   &:last-child {
     border: none;
+    ${props => (props.ids === 'id' ? 'display:none;' : null)}
     padding: 0;
     margin-top: 20px;
     &:hover {
@@ -173,6 +174,7 @@ export const Mailbox = styled.ul`
   border-radius: 10px;
   border: 1px solid var(--btn-border-color);
   height: ${props => (props.uids === 'true' ? '96%' : '100%')};
+  ${props => (props.ids === 'id' ? 'height:100%;' : null)}
   overflow-y: auto;
   ::-webkit-scrollbar {
     width: 10px; /* Ширина полоси */

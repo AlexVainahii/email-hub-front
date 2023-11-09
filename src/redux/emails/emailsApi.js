@@ -27,6 +27,15 @@ export const emailsApi = createApi({
 
       invalidatesTags: ['Emails'],
     }),
+
+    getNewEmailsFromBox: builder.mutation({
+      query: ({ _id, path, page, uid }) => ({
+        url: `/getNewEmailsFromBox?_id=${_id}&path=${path}&page=${page}&uid=${uid}`,
+        method: 'GET',
+      }),
+
+      invalidatesTags: ['Emails'],
+    }),
     getEmailsFromSearch: builder.query({
       query: ({ _id, path, search }) => ({
         url: `/getEmailsFromSearch?_id=${_id}&path=${path}&search=${search}`,
@@ -58,11 +67,45 @@ export const emailsApi = createApi({
       }),
       invalidatesTags: ['Emails'],
     }),
-
+    sendEmail: builder.mutation({
+      query: data => ({
+        url: '/sendMail/',
+        method: 'POST',
+        body: data,
+      }),
+      invalidatesTags: ['Emails'],
+    }),
     editImapEmail: builder.mutation({
       query: ({ id, ...data }) => ({
         url: `/${id}`,
         method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['Emails'],
+    }),
+
+    moveEmail: builder.mutation({
+      query: data => ({
+        url: `/move`,
+        method: 'PUT',
+        body: data,
+      }),
+      invalidatesTags: ['Emails'],
+    }),
+
+    deleteEmail: builder.mutation({
+      query: data => ({
+        url: `/delete`,
+        method: 'DELETE',
+        body: data,
+      }),
+      invalidatesTags: ['Emails'],
+    }),
+
+    flagsEmail: builder.mutation({
+      query: data => ({
+        url: `/flags`,
+        method: 'PUT',
         body: data,
       }),
       invalidatesTags: ['Emails'],
@@ -80,10 +123,15 @@ export const emailsApi = createApi({
 
 export const {
   useGetEmailsFromBoxQuery,
+  useGetNewEmailsFromBoxMutation,
   useGetEmailsFromSearchQuery,
   useGetAllBoxQuery,
   useGetMailOneQuery,
   useCreateImapEmailMutation,
+  useSendEmailMutation,
   useEditImapEmailMutation,
   useDeleteImapEmailMutation,
+  useDeleteEmailMutation,
+  useFlagsEmailMutation,
+  useMoveEmailMutation,
 } = emailsApi;

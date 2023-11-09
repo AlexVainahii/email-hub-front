@@ -50,6 +50,7 @@ export const SiMailgunI = styled(SiMailgun)`
 `;
 
 export const FormWrapper = styled.div`
+  position: relative;
   width: 450px;
   margin: 0 auto;
 `;

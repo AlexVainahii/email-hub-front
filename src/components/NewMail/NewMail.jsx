@@ -22,6 +22,7 @@ import { SendIcon } from 'components/ListBox/Listbox.styled';
 import { Iframe } from 'components/Mail/Mail.styled';
 import { useSelector } from 'react-redux';
 import { selectMail } from 'redux/local/selectors';
+import { useSendEmailMutation } from 'redux/emails/emailsApi';
 
 const NewMail = () => {
   const [
@@ -33,15 +34,17 @@ const NewMail = () => {
     color,
     handleNavigateNew,
   ] = useOutletContext();
+  const mail = useSelector(selectMail);
 
-  const [text, setText] = useState('');
   const { uids } = useParams();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const path = searchParams.get('boxPath');
   const resend = searchParams.get('resend');
   const upsend = searchParams.get('upsend');
+  const [text, setText] = useState(resend === 'true' ? mail : '');
   const uid = searchParams.get('uid');
+  const [sendEmail] = useSendEmailMutation();
   const [recipient, setRecipient] = useState(
     uid
       ? `${mailArray.find(elem => elem.id === Number(uid))?.from?.name}<${
@@ -52,7 +55,7 @@ const NewMail = () => {
   const [subject, setSubject] = useState(
     uid ? `re: ${mailArray.find(elem => elem.id === Number(uid))?.subject}` : ''
   );
-  const mail = useSelector(selectMail);
+
   const handleChange = value => {
     setText(value);
   };
@@ -65,15 +68,18 @@ const NewMail = () => {
     setSubject(e.target.value);
   };
 
-  const handleSend = e => {
+  const handleSend = async e => {
     e.preventDefault();
-    // Отримайте значення recipient, subject і text та надішліть їх на сервер
+    console.log('{ recipient, subject, text, _id: uids } :>> ', {
+      recipient: recipient,
+      subject: subject,
+      text: text,
+      _id: uids,
+    });
+    const answer = await sendEmail({ recipient, subject, text, _id: uids }); // Отримайте значення recipient, subject і text та надішліть їх на сервер
     console.log('Відправлено:');
-    console.log('Отримувач:', recipient);
-    console.log('Тема:', subject);
-    console.log('Текст:', text);
+    console.log('Отримувач:', answer);
   };
-
   const modules = {
     toolbar: [
       [{ header: '1' }, { header: '2' }, { font: [] }],

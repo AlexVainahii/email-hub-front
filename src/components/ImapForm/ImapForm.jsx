@@ -16,9 +16,7 @@ import {
   SiProtonmailI,
   SiZohoI,
   SiMailgunI,
-  IoMdHelpCircleI,
   FormGroupI,
-  SettingsBox,
   SettingsTitle,
 } from './ImapForm.styled';
 import {
@@ -34,6 +32,8 @@ import { selectListBox } from 'redux/local/selectors';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { changeLocal } from 'redux/local/slice';
+import { override } from 'components/Bandero-goose/ImageAnimation.styled';
+import { MoonLoader } from 'react-spinners';
 
 const ImapForm = ({
   onClose,
@@ -56,16 +56,16 @@ const ImapForm = ({
   const [port, setPort] = useState(initialSettings?.port || '993');
   const [username, setUsername] = useState(initialSettings?.email || '');
   const [pass, setPass] = useState('');
-  const [secure, setSecure] = useState(initialSettings?.secure || true);
+  const [secure, setSecure] = useState(initialSettings?.secure && true);
+  const [smtpSecure, setSmtpSecure] = useState(
+    initialSettings?.smtpSecure && true
+  );
   const [smtpHost, setSmtpHost] = useState(
     initialSettings?.smtpHost || 'smtp.gmail.com'
   );
   const [smtpPort, setSmtpPort] = useState(initialSettings?.smtpPort || '587');
-  const [smtpUsername, setSmtpUsername] = useState(
-    initialSettings?.smtpEmail || ''
-  );
-  const [addressPass, setAddressPass] = useState('');
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState('Початкове завантаження даних');
   const [createImapEmail] = useCreateImapEmailMutation();
   const [editImapEmail] = useEditImapEmailMutation();
 
@@ -90,33 +90,31 @@ const ImapForm = ({
       host,
       port: Number(port),
       email: username,
+      pass,
       secure,
+      smtpSecure,
       smtpHost,
-      smtpPort,
-      smtpUsername,
-      addressPass,
+      smtpPort: Number(smtpPort),
     };
-
+    setIsLoading(true);
     // Створюємо новий об'єкт, який містить лише поля зі змінами порівняно з initialSettings
-    const changedSettings = {};
-    for (const key in newSettings) {
-      if (newSettings[key] !== initialSettings[key]) {
-        if (key === 'pass' && pass.trim() === '') {
-          continue;
-        }
-        changedSettings[key] = newSettings[key];
-      }
-    }
 
     // Додайте сюди поля для SMTP налаштувань
-    changedSettings.smtpHost = 'smtp.example.com';
-    changedSettings.smtpPort = 587;
-    changedSettings.smtpEmail = 'smtpuser@example.com';
-    changedSettings.smtpSecure = true;
 
     try {
       if (initialSettings) {
-        // Тут виконайте ваш запит на оновлення налаштувань, використовуючи changedSettings
+        setMessage('Зміни в конфігурації');
+        setIsLoading(true);
+        const changedSettings = {};
+        for (const key in newSettings) {
+          if (newSettings[key] !== initialSettings[key]) {
+            if (key === 'pass' && pass.trim() === '') {
+              continue;
+            }
+            changedSettings[key] = newSettings[key];
+          }
+        }
+
         const editBox = await editImapEmail({
           id: initialSettings._id,
           ...changedSettings,
@@ -148,8 +146,9 @@ const ImapForm = ({
         showSuccessToast(t('addtask.succ1'));
       } else {
         // Тут виконайте ваш запит на створення нових налаштувань, використовуючи changedSettings
-        console.log('objectcreat :>> ', changedSettings);
-        const newBox = await createImapEmail(changedSettings);
+        setMessage('Початкове завантаження даних');
+        setIsLoading(true);
+        const newBox = await createImapEmail(newSettings);
         if (newBox.data.hasOwnProperty('error')) {
           showErrorToast(t('addtask.err4'));
           return;
@@ -165,117 +164,139 @@ const ImapForm = ({
       onClose();
     } catch (error) {
       showErrorToast(t('addtask.err3'));
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <FormWrapper>
-      <FormGroupI>
-        <FormTitle>Налаштування поштової адреси</FormTitle>
-      </FormGroupI>
+    <>
+      <FormWrapper>
+        <FormGroupI>
+          <FormTitle>Налаштування поштової адреси</FormTitle>
+        </FormGroupI>
 
-      <FormGroup>
-        <Label htmlFor="icon">Іконка:</Label>
-        <CustomSelect // Використовуємо кастомний селект
-          options={iconOptions}
-          color={color}
-          selectedValue={icon}
-          onChange={setIcon}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="color">Колір піктограми:</Label>
-        <ColorPicker color={color} onChange={setColor} />
-        <Label htmlFor="useTls">Використовувати TLS:</Label>
-        <Checkbox
-          type="checkbox"
-          id="useTls"
-          name="useTls"
-          checked={secure}
-          onChange={e => setSecure(e.target.checked)}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="username">Поштова адреса:</Label>
-        <Input
-          type="text"
-          id="username"
-          name="username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="smtpPass">Пароль до поштової адреси:</Label>
-        <Input
-          type="password"
-          id="smtpPass"
-          name="smtpPass"
-          value={addressPass}
-          onChange={e => setAddressPass(e.target.value)}
-        />
-      </FormGroup>
-      <SettingsTitle>Налаштування IMAP</SettingsTitle>
-      <FormGroup>
-        <Label htmlFor="host">Хост:</Label>
-        <Input
-          type="text"
-          id="host"
-          name="host"
-          value={host}
-          onChange={e => setHost(e.target.value)}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="port">Порт:</Label>
-        <Input
-          type="text"
-          id="port"
-          name="port"
-          value={port}
-          onChange={e => setPort(e.target.value)}
-        />
-      </FormGroup>
+        <FormGroup>
+          <Label htmlFor="icon">Іконка:</Label>
+          <CustomSelect // Використовуємо кастомний селект
+            options={iconOptions}
+            color={color}
+            selectedValue={icon}
+            onChange={setIcon}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="color">Колір піктограми:</Label>
+          <ColorPicker color={color} onChange={setColor} />
+          <Label htmlFor="useTls">Використовувати TLS:</Label>
+          <Checkbox
+            type="checkbox"
+            id="useTls"
+            name="useTls"
+            checked={secure}
+            onChange={e => setSecure(e.target.checked)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="username">Поштова адреса:</Label>
+          <Input
+            type="text"
+            id="username"
+            name="username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+          />
+        </FormGroup>
+        <SettingsTitle>Налаштування IMAP</SettingsTitle>
+        <FormGroup>
+          <Label htmlFor="host">Хост:</Label>
+          <Input
+            type="text"
+            id="host"
+            name="host"
+            value={host}
+            onChange={e => setHost(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="port">Порт:</Label>
+          <Input
+            type="text"
+            id="port"
+            name="port"
+            value={port}
+            onChange={e => setPort(e.target.value)}
+          />
+        </FormGroup>
 
-      <FormGroup>
-        <Label htmlFor="pass">Пароль для додатків:</Label>
-        <Input
-          type="password"
-          id="pass"
-          name="pass"
-          value={pass}
-          onChange={e => setPass(e.target.value)}
-        />
-      </FormGroup>
-      <SettingsTitle>Налаштування SMPT</SettingsTitle>
-      <FormGroup>
-        <Label htmlFor="smtpHost">Хост:</Label>
-        <Input
-          type="text"
-          id="smtpHost"
-          name="smtpHost"
-          value={smtpHost}
-          onChange={e => setSmtpHost(e.target.value)}
-        />
-      </FormGroup>
-      <FormGroup>
-        <Label htmlFor="smtpPort">Порт</Label>
-        <Input
-          type="text"
-          id="smtpPort"
-          name="smtpPort"
-          value={smtpPort}
-          onChange={e => setSmtpPort(e.target.value)}
-        />
-      </FormGroup>
-
-      <BtnWrapper>
-        <Btn onClick={onClose}>Скасувати</Btn>
-        <Btn onClick={handleSave}>
-          {initialSettings ? 'Змінити' : 'Зберегти'}
-        </Btn>
-      </BtnWrapper>
-    </FormWrapper>
+        <FormGroup>
+          <Label htmlFor="pass">Пароль для додатків:</Label>
+          <Input
+            type="password"
+            id="pass"
+            name="pass"
+            value={pass}
+            onChange={e => setPass(e.target.value)}
+          />
+        </FormGroup>
+        <SettingsTitle>Налаштування SMPT</SettingsTitle>
+        <FormGroup>
+          <Label htmlFor="smtpHost">Хост:</Label>
+          <Input
+            type="text"
+            id="smtpHost"
+            name="smtpHost"
+            value={smtpHost}
+            onChange={e => setSmtpHost(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup>
+          <Label htmlFor="smtpPort">Порт</Label>
+          <Input
+            type="text"
+            id="smtpPort"
+            name="smtpPort"
+            value={smtpPort}
+            onChange={e => setSmtpPort(e.target.value)}
+          />
+        </FormGroup>
+        <FormGroup style={{ justifyContent: 'flex-end', gap: '15px' }}>
+          <Label htmlFor="useSls">Використовувати SSL:</Label>
+          <Checkbox
+            type="checkbox"
+            id="useSls"
+            name="useSls"
+            checked={smtpSecure}
+            onChange={e => setSmtpSecure(e.target.checked)}
+          />
+        </FormGroup>
+        <BtnWrapper>
+          <Btn onClick={onClose}>Скасувати</Btn>
+          <Btn onClick={handleSave}>
+            {initialSettings ? 'Змінити' : 'Зберегти'}
+          </Btn>
+        </BtnWrapper>
+      </FormWrapper>
+      {isLoading ? (
+        <div
+          style={{
+            top: '0',
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 20,
+            background: 'rgba(0, 0, 0, 0.5)',
+          }}
+        >
+          <MoonLoader color="#fff" loading={true} css={override} size={100} />
+          <h4>{message}</h4>
+        </div>
+      ) : null}
+    </>
   );
 };
 

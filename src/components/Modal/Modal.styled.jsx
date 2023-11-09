@@ -51,7 +51,7 @@ export const CloseBtn = styled(CgClose)`
   right: 14px;
   width: 24px;
   height: 24px;
-  
+
   color: var(--modal-close-icon);
   transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
@@ -64,4 +64,5 @@ export const CloseBtn = styled(CgClose)`
     top: 18px;
     right: 18px;
   }
+  z-index: 21;
 `;

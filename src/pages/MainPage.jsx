@@ -18,7 +18,6 @@ const MainPage = () => {
       <AuthSection />
       <Description />
       <ReviewsSlider />
-      <Footer />
     </div>
   );
 };

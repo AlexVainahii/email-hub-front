@@ -18,6 +18,11 @@ import SideBar from '../SideBar';
 // import Spinner from '../Spiner';
 import { loadLocal } from '../ThemeToggler/localStorage';
 import ImageAnimation from 'components/Bandero-goose/ImageAnimation';
+import {
+  ContainerR,
+  override,
+} from 'components/Bandero-goose/ImageAnimation.styled';
+import { MoonLoader } from 'react-spinners';
 
 const thema = loadLocal('isLightTheme') ?? true;
 
@@ -57,7 +62,27 @@ const MainLayout = () => {
             setIsLightTheme={setIsLightTheme}
           />
           <Main>
-            <Suspense fallback={<ImageAnimation />}>
+            <Suspense
+              fallback={
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <MoonLoader
+                    color="#fff"
+                    loading={true}
+                    css={override}
+                    size={100}
+                  />
+                </div>
+              }
+            >
               <Outlet context={[isLightTheme]} />
             </Suspense>
           </Main>

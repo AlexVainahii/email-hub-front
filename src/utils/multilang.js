@@ -15,14 +15,14 @@ i18next
             calendar: 'CALENDAR',
             view: 'VIEW',
             calendarText:
-              'GooseTracks Calendar view provides a comprehensive overview of your schedule, displaying all your tasks, events, and appointmentsin a visually appealing and intuitive layout.',
+              'Email-Hub Calendar view provides a comprehensive overview of your schedule, displaying all your tasks, events, and appointmentsin a visually appealing and intuitive layout.',
             sidebar: 'SIDEBAR',
             sidebarText:
-              'GooseTrack offers easy access to your account settings, calendar, and filters. The "My Account" section allows you to manage your profile information and preferences, while the calendar provides a quick and convenient way to view your upcoming events and tasks.',
+              'Email-Hub offers easy access to your account settings, calendar, and filters. The "My Account" section allows you to manage your profile information and preferences, while the calendar provides a quick and convenient way to view your upcoming events and tasks.',
             allIn: 'ALL IN',
             one: 'ONE',
             allInText:
-              'GooseTrack is an all-in-one productivity tool that helps you stay on top of your tasks, events, and deadlines. Say goodbye to scattered to-do lists and hello to streamlined productivity with GooseTrack.',
+              'Email-Hub is an all-in-one productivity tool that helps you stay on top of your tasks, events, and deadlines. Say goodbye to scattered to-do lists and hello to streamlined productivity with GooseTrack.',
           },
           authSection: {
             g: 'Email',
@@ -35,34 +35,7 @@ i18next
           reviewsSlider: {
             header: 'Reviews',
           },
-          footer: {
-            rights: 'All Rights Reserved',
-            develop: 'Developed by',
-            avengers: 'AVENGERS',
-          },
-          team: {
-            o: 'O',
-            urteam: 'ur TEAM',
-            back: 'Back',
-            hadar: 'Andriy Hadar',
-            vaynagiy: 'Oleksandr Vainahii',
-            till: 'Anna Till',
-            ketsko: 'Andriy Ketsko',
-            hanzel: 'Andriy Hanzel',
-            siracenko: 'Serghei Siracenko',
-            klymenko: 'Yurii Klymenko',
-            kagadiy: 'Yurii Kagadiy',
-            karpinska: 'Galyna Karpinska',
-            deren: 'Oleksandr Deren',
-            kostenko: 'Volodymyr Kostenko',
-            daskova: 'Ivetta Dashkova',
-            teamlead: 'Team lead',
-            scrum: 'Scrum master',
-            front: 'Front-end',
-            back1: 'Back-end',
-            dev: 'Developer',
-            mentor: 'Mentor',
-          },
+
           inout: {
             name: 'Name',
             login: 'Log In',
@@ -222,14 +195,14 @@ i18next
             calendar: 'КАЛЕНДАРНИЙ',
             view: 'ВИГЛЯД',
             calendarText:
-              'Подання календаря Гусятниця ;) надає вичерпний огляд вашого розкладу, відображаючи всі ваші завдання, події та зустрічі у візуально привабливому та інтуїтивно зрозумілому вигляді.',
+              'Подання календаря Центру електронної пошти надає вичерпний огляд вашого розкладу, відображаючи всі ваші завдання, події та зустрічі у візуально привабливому та інтуїтивно зрозумілому вигляді.',
             sidebar: 'МЕНЮ',
             sidebarText:
-              'Гусятниця ;) пропонує легкий доступ до налаштувань вашого облікового запису, календаря, і фільтри. Розділ «Мій профіль» дозволяє керувати відомостями профілю та вподобаннями, а календар надає швидкий і зручний спосіб перегляду майбутніх подій і завдань.',
+              'Центр електронної пошти пропонує легкий доступ до налаштувань вашого облікового запису, календаря, і фільтри. Розділ «Мій профіль» дозволяє керувати відомостями профілю та вподобаннями, а календар надає швидкий і зручний спосіб перегляду майбутніх подій і завдань.',
             allIn: 'УСЕ У',
             one: 'ОДНОМУ',
             allInText:
-              'Гусятниця ;) — це універсальний інструмент підвищення продуктивності, який допоможе вам залишатися на пульсі ваших завдань, подій і термінів. Попрощайтеся із списками справ на папірцях і вітайте збільшену продуктивність з Гусятницею ;).',
+              'Центр електронної пошти — це універсальний інструмент підвищення продуктивності, який допоможе вам залишатися на пульсі ваших завдань, подій і термінів. Попрощайтеся із списками справ на папірцях і вітайте збільшену продуктивність з Гусятницею ;).',
           },
           authSection: {
             g: 'Центр ',
@@ -241,34 +214,6 @@ i18next
           },
           reviewsSlider: {
             header: 'Відгуки',
-          },
-          footer: {
-            rights: 'Усі права захищено',
-            develop: 'Розроблено',
-            avengers: 'МЕСНИКАМИ',
-          },
-          team: {
-            o: 'Н',
-            urteam: 'аша КОМАНДА',
-            back: 'Повернутись',
-            hadar: 'Aндрій Гадар',
-            vaynagiy: 'Олександр Вайнагій',
-            till: 'Анна Тіль',
-            ketsko: 'Андрій Кецко',
-            hanzel: 'Андрій Ганзел',
-            siracenko: 'Сергій Сіраченко',
-            klymenko: 'Юрій Клименко',
-            kagadiy: 'Юрій Кагадій',
-            karpinska: 'Галина Карпінська',
-            deren: 'Олександр Дерен',
-            kostenko: 'Володимир Костенко',
-            daskova: 'Іветта Дашкова',
-            teamlead: 'Наш лідер',
-            scrum: 'Наш скрам',
-            front: 'на фронті',
-            back1: 'на беку',
-            dev: 'Розробник',
-            mentor: 'Наш ментор',
           },
           inout: {
             name: "Ваше ім'я",

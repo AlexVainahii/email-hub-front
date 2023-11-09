@@ -87,15 +87,15 @@ const Description = () => {
             <div>
               <Title>
                 <SubTitle>
-                  <Trans i18nKey="description.calendar">CALENDAR </Trans>
+                  <Trans i18nKey="description.allIn">CALENDAR </Trans>
                 </SubTitle>
-                {t('description.view')}
+                {t('description.one')}
               </Title>
             </div>
-            <TextSpan>{t('description.calendarText')}</TextSpan>
+            <TextSpan>{t('description.allInText')}</TextSpan>
           </ItemSpan>
           <ImageWrapper>
-            <Image src={selectedCalendarPath} alt="Calendar" />
+            <Image src={selectedAllPath} alt="All" />
           </ImageWrapper>
         </Item>
         <Item key={2}>
@@ -115,14 +115,14 @@ const Description = () => {
             <Number>3.</Number>
             <div>
               <Title>
-                <SubTitle>{t('description.allIn')}</SubTitle>
-                {t('description.one')}
+                <SubTitle>{t('description.calendar')}</SubTitle>
+                {t('description.view')}
               </Title>
             </div>
-            <TextSpan>{t('description.allInText')}</TextSpan>
+            <TextSpan>{t('description.calendarText')}</TextSpan>
           </ItemSpan>
           <ImageWrapper>
-            <Image src={selectedAllPath} alt="All" />
+            <Image src={selectedCalendarPath} alt="Calendar" />
           </ImageWrapper>
         </Item>
       </List>

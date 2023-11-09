@@ -3,6 +3,7 @@
 import ImageAnimation from 'components/Bandero-goose/ImageAnimation';
 import ControlPanelMail from 'components/ControlPanelMail';
 import ImapBox from 'components/ImapBox';
+import ListBox from 'components/ListBox';
 import {
   CategoriesItem,
   CategoriesList,
@@ -16,7 +17,6 @@ import {
   MailboxWraper,
   NameBox,
   SendButton,
-  SendIcon,
   UnseenBox,
 } from 'components/ListBox/Listbox.styled.js';
 import { Suspense, useEffect, useState } from 'react';
@@ -33,6 +33,9 @@ import { selectUser } from 'redux/auth/selectors';
 import {
   useGetAllBoxQuery,
   useGetEmailsFromBoxQuery,
+  useDeleteEmailMutation,
+  useFlagsEmailMutation,
+  useMoveEmailMutation,
 } from 'redux/emails/emailsApi';
 import {
   selectId,
@@ -52,18 +55,22 @@ const MailsPage = () => {
   const location = useLocation();
   const { itemPerPage } = useSelector(selectUser);
   const boxStorage = useSelector(selectListBox);
+  const [deleteEmail] = useDeleteEmailMutation();
+  const [moveEmail] = useMoveEmailMutation();
+  const [flagsEmail] = useFlagsEmailMutation();
   const idStorage = useSelector(selectId);
   const pathStorage = useSelector(selectPath);
   const pageStorage = useSelector(selectPage);
   const dispatch = useDispatch();
   const { data: allListBox } = useGetAllBoxQuery();
-  const { _id, uids } = useParams();
+  const { _id, uid, uids } = useParams();
+  // console.log('_id :>> ', _id);
   const [searchParams] = useSearchParams();
   const path = searchParams.get('boxPath');
   const [serverPage, setServerPage] = useState(1);
   const page = Number(searchParams.get('page'));
   const search = searchParams.get('search');
-  const { data: allList } = useGetEmailsFromBoxQuery(
+  const { data: allList, refetch } = useGetEmailsFromBoxQuery(
     {
       _id,
       path,
@@ -118,7 +125,7 @@ const MailsPage = () => {
       setAllBoxes(listImap || []);
 
       if (listImap.length === 0) {
-        dispatch([]);
+        dispatch(changeLocal([]));
         dispatch(changeId(null));
         dispatch(changePath(null));
 
@@ -133,7 +140,6 @@ const MailsPage = () => {
           console.log('asdada2 :>> ');
           dispatch(changeId(listImap[0]._id));
           dispatch(changePath(listImap[0].mailboxes[0].path));
-
           setAccentBox(listImap[0]);
           setColor(listImap[0]?.color);
         } else {
@@ -157,6 +163,13 @@ const MailsPage = () => {
             { state: { from: location } }
           );
         }
+        if (!_id && !uid && !uids)
+          navigate(
+            `mailbox/${idStorage || listImap[0]._id}?boxPath=${
+              pathStorage || listImap[0].mailboxes[0].path
+            }&page=${pageStorage || 1}`,
+            { state: { from: location } }
+          );
       }
     }
   }, [allListBox]);
@@ -174,6 +187,7 @@ const MailsPage = () => {
 
   useEffect(() => {
     if (allList && allBoxes) {
+      refetch();
       const indexBox = allBoxes.findIndex(box => box._id === allList._id);
       const indexMailBox = accentBox?.mailboxes?.findIndex(
         box => box.path === allList.path
@@ -194,7 +208,13 @@ const MailsPage = () => {
                         existingMessage => existingMessage.id === message.id
                       )
                   );
-                  const newMailList = [...existingMessages, ...uniqueMessages];
+
+                  const newMailList =
+                    allList.page === '1'
+                      ? [...newMessages].sort((a, b) => b.id - a.id)
+                      : [...existingMessages, ...uniqueMessages].sort(
+                          (a, b) => b.id - a.id
+                        );
 
                   // Сортування за спаданням ID
                   newMailList.sort((a, b) => b.id - a.id);
@@ -226,13 +246,38 @@ const MailsPage = () => {
 
   useEffect(() => {
     if (!search) {
-      console.log('viiiii1 :>> ', accentBox);
-      setColor(accentBox?.color);
       setMailArray(
         accentBox?.mailboxes?.find(elem => elem.path === path)?.mailList
       );
     }
   }, [accentBox, path]);
+  useEffect(() => {
+    if (!search) {
+      console.log('Прийшла Заміна:>> ', accentBox);
+      dispatch(
+        changeLocal(
+          boxStorage.map(elem => {
+            if (elem._id === accentBox._id) {
+              return accentBox;
+            }
+            return elem;
+          })
+        )
+      );
+      setAllBoxes(
+        boxStorage.map(elem => {
+          if (elem._id === accentBox._id) {
+            return accentBox;
+          }
+          return elem;
+        })
+      );
+      setColor(accentBox?.color);
+      setMailArray(
+        accentBox?.mailboxes?.find(elem => elem.path === path)?.mailList
+      );
+    }
+  }, [accentBox]);
   const handleNavigate = id => {
     search
       ? navigate(
@@ -261,6 +306,185 @@ const MailsPage = () => {
             state: { from: location },
           }
         );
+  };
+
+  const handleMove = async (fromPath, toPath, uids) => {
+    const newArray = !uids ? checkedMailArray.map(elem => elem.id) : [uids.id];
+    await moveEmail({
+      _id,
+      fromPath,
+      toPath,
+      mailList: newArray,
+    });
+
+    setAccentBox(prev => {
+      const mailboxIndexFrom = prev.mailboxes.findIndex(
+        elem => elem.path === fromPath
+      );
+      const mailboxIndexTo = prev.mailboxes.findIndex(
+        elem => elem.path === toPath
+      );
+
+      const updatedMailboxes = [...prev.mailboxes];
+      updatedMailboxes[mailboxIndexFrom] = {
+        ...updatedMailboxes[mailboxIndexFrom],
+        mailList: updatedMailboxes[mailboxIndexFrom].mailList
+          .filter(elem => !newArray.includes(elem.id))
+          .map(elem => {
+            return {
+              ...elem,
+              id:
+                elem.id -
+                newArray.filter(el => {
+                  return el < elem.id;
+                }).length,
+            };
+          }),
+        countMail:
+          updatedMailboxes[mailboxIndexFrom].countMail - newArray.length,
+        countMailUnseen:
+          updatedMailboxes[mailboxIndexFrom].countMailUnseen -
+          (!uids
+            ? checkedMailArray.filter(elem => {
+                return elem.unseen === true;
+              }).length
+            : uids.unseen === true
+            ? 1
+            : 0), // Оновлюємо mailList
+      };
+
+      updatedMailboxes[mailboxIndexTo] = {
+        ...updatedMailboxes[mailboxIndexTo],
+        mailList: [
+          ...updatedMailboxes[mailboxIndexTo].mailList,
+          ...(uids ? [uids] : checkedMailArray),
+        ]
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .map((elem, index) => {
+            return {
+              ...elem,
+              id:
+                updatedMailboxes[mailboxIndexTo].countMail +
+                newArray.length -
+                index,
+            };
+          }),
+        countMail: updatedMailboxes[mailboxIndexTo].countMail + newArray.length,
+        countMailUnseen:
+          updatedMailboxes[mailboxIndexTo].countMailUnseen +
+          (!uids
+            ? checkedMailArray.filter(elem => {
+                return elem.unseen === true;
+              }).length
+            : uids.unseen === true
+            ? 1
+            : 0), // Оновлюємо mailList
+      };
+
+      setCheckedMailArray([]);
+      return {
+        ...prev,
+        mailboxes: updatedMailboxes,
+      }; // Оновлюємо mailboxes в accentBox та повертаємо оновлений об'єкт accentBox
+    });
+  };
+
+  const handleFlags = async (bool, uids) => {
+    if (
+      checkedMailArray.filter(elem => elem.unseen === !bool).length ===
+        checkedMailArray.length &&
+      uid
+    )
+      return;
+
+    const newArray = !uids ? checkedMailArray.map(elem => elem.id) : [uids.id];
+    flagsEmail({
+      _id,
+      path,
+      mailList: newArray,
+      seen: !bool,
+    });
+
+    setAccentBox(prev => {
+      const mailboxIndex = prev.mailboxes.findIndex(elem => elem.path === path);
+
+      const updatedMailboxes = [...prev.mailboxes];
+      updatedMailboxes[mailboxIndex] = {
+        ...updatedMailboxes[mailboxIndex],
+        mailList: updatedMailboxes[mailboxIndex].mailList.map(elem => {
+          if (newArray.includes(elem.id)) return { ...elem, unseen: !bool };
+          return elem;
+        }),
+        countMailUnseen: bool
+          ? updatedMailboxes[mailboxIndex].countMailUnseen -
+            (!uids
+              ? checkedMailArray.filter(elem => {
+                  return elem.unseen === true;
+                }).length
+              : uids.unseen === true
+              ? 1
+              : 0)
+          : updatedMailboxes[mailboxIndex].countMailUnseen +
+            (!uids
+              ? checkedMailArray.filter(elem => {
+                  return elem.unseen === false;
+                }).length
+              : uids.unseen === false
+              ? 1
+              : 0), // Оновлюємо mail
+      };
+
+      setCheckedMailArray([]);
+      return {
+        ...prev,
+        mailboxes: updatedMailboxes,
+      }; // Оновлюємо mailboxes в accentBox та повертаємо оновлений об'єкт accentBox
+    });
+  };
+  const handleDelete = async (path, uids) => {
+    const newArray = !uids ? checkedMailArray.map(elem => elem.id) : [uids.id];
+    await deleteEmail({
+      _id,
+      path,
+      mailList: newArray,
+    });
+
+    setAccentBox(prev => {
+      const mailboxIndex = prev.mailboxes.findIndex(elem => elem.path === path);
+
+      const updatedMailboxes = [...prev.mailboxes];
+      updatedMailboxes[mailboxIndex] = {
+        ...updatedMailboxes[mailboxIndex],
+        mailList: updatedMailboxes[mailboxIndex].mailList
+          .filter(elem => !newArray.includes(elem.id))
+          .map(elem => {
+            return {
+              ...elem,
+              id:
+                elem.id -
+                newArray.filter(el => {
+                  return el < elem.id;
+                }).length,
+            };
+          }),
+        countMail: updatedMailboxes[mailboxIndex].countMail - newArray.length,
+        countMailUnseen:
+          updatedMailboxes[mailboxIndex].countMailUnseen -
+          (!uids
+            ? checkedMailArray.filter(elem => {
+                return elem.unseen === true;
+              }).length
+            : uids.unseen === true
+            ? 1
+            : 0), // Оновлюємо mailList
+      };
+
+      setCheckedMailArray([]);
+      return {
+        ...prev,
+        mailboxes: updatedMailboxes,
+      }; // Оновлюємо mailboxes в accentBox та повертаємо оновлений об'єкт accentBox
+    });
   };
   return (
     <ContainerWrapperL>
@@ -304,7 +528,7 @@ const MailsPage = () => {
                   </CategoriesItem>
                 )
               )}
-              <CategoriesItem color={color}>
+              <CategoriesItem ids={_id} color={color}>
                 <SendButton
                   to={`newmail/${
                     _id ? _id : uids
@@ -321,7 +545,7 @@ const MailsPage = () => {
           </CategoriesListWrap>
 
           <MailboxWrap>
-            {!uids ? (
+            {uid || _id ? (
               <ControlPanelMail
                 box={accentBox?.mailboxes?.find(
                   mailBox => mailBox.path === boxPath
@@ -332,9 +556,14 @@ const MailsPage = () => {
                 mailArray={mailArray}
                 setCheckedMailArray={setCheckedMailArray}
                 checkedMailArray={checkedMailArray}
+                setAccentBox={setAccentBox}
+                accentBox={accentBox}
+                handleMove={handleMove}
+                handleFlags={handleFlags}
+                handleDelete={handleDelete}
               />
             ) : null}{' '}
-            <Mailbox uids={(!uids).toString()}>
+            <Mailbox uids={(!uids).toString()} ids={_id}>
               <Suspense fallback={<ImageAnimation />}>
                 <Outlet
                   context={[
@@ -347,6 +576,9 @@ const MailsPage = () => {
                     handleNavigateNew,
                     dataD,
                     setDataD,
+                    handleMove,
+                    handleFlags,
+                    handleDelete,
                   ]}
                 />
               </Suspense>

@@ -17,10 +17,11 @@ import MainLayout from './MainLayout/MainLayout';
 import { ChoosedMonth } from './Calendar/ChoosedMonth/ChoosedMonth';
 import { ChoosedDay } from './Calendar/ChoosedDay/ChoosedDay';
 import ImageAnimation from './Bandero-goose/ImageAnimation';
-import { ContainerR, Img, Img1 } from './Bandero-goose/ImageAnimation.styled';
+import { ContainerR, override } from './Bandero-goose/ImageAnimation.styled';
 import ListBox from './ListBox';
 import Mail from './Mail';
 import NewMail from './NewMail';
+import { MoonLoader } from 'react-spinners';
 
 const MainPage = lazy(() => import('pages/MainPage'));
 const RegisterPage = lazy(() => import('pages/RegisterPage'));
@@ -29,7 +30,6 @@ const AccountPage = lazy(() => import('pages/AccountPage'));
 const CalendarPage = lazy(() => import('pages/CalendarPage'));
 const StatisticsPage = lazy(() => import('pages/StatisticsPage'));
 const NotFoundPage = lazy(() => import('pages/NotFoundPage'));
-const TeamPage = lazy(() => import('pages/TeamPage'));
 const VerifyEmail = lazy(() => import('pages/VerifyPage'));
 const MailsPage = lazy(() => import('pages/MailsPage'));
 const PasswordRecoveryPage = lazy(() => import('pages/PasswordRecoveryPage'));
@@ -44,9 +44,7 @@ export const App = () => {
 
   return isRefreshing ? (
     <ContainerR>
-      <Img src={image} alt="Зображення" />
-      <Img1 src={image1} alt="Зображення1" />
-      <ImageAnimation />
+      <MoonLoader color="#fff" loading={true} css={override} size={100} />
     </ContainerR>
   ) : (
     <Suspense fallback={<ImageAnimation />}>
@@ -54,14 +52,7 @@ export const App = () => {
         <Route
           path="/"
           element={
-            <RestrictedRoute component={<MainPage />} navigateTo="/calendar" />
-          }
-        />
-
-        <Route
-          path="/team"
-          element={
-            <RestrictedRoute component={<TeamPage />} navigateTo="/calendar" />
+            <RestrictedRoute component={<MainPage />} navigateTo="/emails" />
           }
         />
 
@@ -78,7 +69,7 @@ export const App = () => {
         <Route
           path="/login"
           element={
-            <RestrictedRoute component={<LoginPage />} navigateTo="/calendar" />
+            <RestrictedRoute component={<LoginPage />} navigateTo="/emails" />
           }
         />
 
